@@ -1,7 +1,7 @@
 <?php
 
 
-//namespace app\models;
+namespace app\models;
 
 
 class User extends Model
@@ -17,8 +17,6 @@ class User extends Model
 
     public function getTableName()
     {
-       return 'users';
+        return 'users';
     }
-
-
 }

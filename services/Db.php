@@ -1,5 +1,7 @@
 <?php
 
+namespace app\services;
+
 class Db
 {
     public function queryOne($sql)
@@ -16,5 +18,4 @@ class Db
     {
         return [];
     }
-
 }
