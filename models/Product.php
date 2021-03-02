@@ -1,6 +1,6 @@
 <?php
 
-//namespace app\models;
+namespace app\models;
 
 class Product extends Model
 {
@@ -12,7 +12,6 @@ class Product extends Model
 
     public function getByCategoryId(int $id)
     {
-
     }
 
     public function getTableName(): string
