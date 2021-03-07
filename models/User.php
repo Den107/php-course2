@@ -15,7 +15,7 @@ class User extends Model
         return $this->db->queryOne($sql);
     }
 
-    public function getTableName()
+    public function getTableName(): string
     {
         return 'users';
     }
