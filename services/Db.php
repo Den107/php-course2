@@ -74,4 +74,9 @@ class Db
     {
         return $this->query($sql, $params)->rowCount();
     }
+
+    public function getLastInsertId()
+    {
+        return $this->getConnection()->lastInsertId();
+    }
 }
