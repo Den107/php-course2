@@ -1,11 +1,11 @@
 <?php
 
-namespace app\models;
+namespace app\models\records;
 
-use app\interfaces\ModelInterface;
+use app\interfaces\RecordInterface;
 use app\services\Db;
 
-abstract class Model implements ModelInterface
+abstract class Record implements RecordInterface
 {
     protected $db;
     protected $tableName;
@@ -19,16 +19,18 @@ abstract class Model implements ModelInterface
         $this->tableName = $this->getTableName();
     }
 
-    public function getAll()
+    public static function getAll()
     {
-        $sql = "SELECT * FROM {$this->tableName}";
-        return $this->getQuery($sql);
+        $tableName = static::getTableName();
+        $sql = "SELECT * FROM {$tableName}";
+        return static::getQuery($sql);
     }
 
-    public function getById(int $id)
+    public static function getById(int $id)
     {
-        $sql = "SELECT * FROM {$this->tableName} WHERE id = :id";
-        return $this->getQuery($sql, [':id' => $id])[0];
+        $tableName = static::getTableName();
+        $sql = "SELECT * FROM {$tableName} WHERE id = :id";
+        return static::getQuery($sql, [':id' => $id])[0];
     }
 
     public function delete()
@@ -37,14 +39,14 @@ abstract class Model implements ModelInterface
         return $this->db->execute($sql, [':id' => $this->id]);
     }
 
-    protected function getQuery(string $sql, array $params = [])
+    protected static function getQuery(string $sql, array $params = [])
     {
-        return $this->db->queryAll($sql, $params, get_called_class());
+        return Db::getInstance()->queryAll($sql, $params, get_called_class());
     }
 
     public function insert()
     {
-        $tableName = $this->getTableName();
+        $tableName = static::getTableName();
 
         $params = [];
         $columns = [];
@@ -67,7 +69,7 @@ abstract class Model implements ModelInterface
 
     public function update()
     {
-        $tableName = $this->getTableName();
+        $tableName = static::getTableName();
 
         $params = [];
         $columns = [];
