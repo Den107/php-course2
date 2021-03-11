@@ -1,9 +1,9 @@
 <?php
 
 
-namespace app\models;
+namespace app\models\records;
 
-class User extends Model
+class User extends Record
 {
     public $name;
     public $email;
@@ -14,7 +14,7 @@ class User extends Model
         return $this->db->queryOne($sql);
     }
 
-    public function getTableName(): string
+    public static function getTableName(): string
     {
         return 'users';
     }
