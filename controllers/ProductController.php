@@ -2,10 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\records\Product;
+
 class ProductController
 {
   protected $action = null;
   protected $defaultAction = 'index';
+  protected $useLayout = true;
+  protected $defaultLayout = 'main';
 
   public function run($action = null)
   {
@@ -20,12 +24,15 @@ class ProductController
 
   public function actionIndex()
   {
-    echo 'catalog';
+    $products = Product::getAll();
+    echo $this->render('catalog', ['products' => $products]);
   }
 
   public function actionCard()
   {
-    echo 'card';
+    $id = $_GET['id'];
+    $product = Product::getById($id);
+    echo $this->render('card', ['product' => $product]);
   }
 
   function renderTemplate(string $templateName, array $params = []): string
@@ -36,11 +43,11 @@ class ProductController
     return ob_get_clean();
   }
 
-  function render(string $template, array $params = [], $useLayout = true)
+  function render(string $template, array $params = [])
   {
     $content = $this->renderTemplate($template, $params);
-    if ($useLayout) {
-      return $this->renderTemplate('layouts/main', ['content' => $content]);
+    if ($this->useLayout) {
+      return $this->renderTemplate('layouts/' . $this->defaultLayout, ['content' => $content]);
     }
     return $content;
   }
