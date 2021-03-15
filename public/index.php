@@ -1,5 +1,5 @@
 <?php
-
+include "../vendor/autoload.php";
 require "../config/main.php";
 require "../services/Autoloader.php";
 require "../vendor/autoload.php";
@@ -16,7 +16,7 @@ $action = $parts[1];
 
 $controllerClass = "app\controllers\\" . ucfirst($controllerName) . "Controller";
 
-if(class_exists($controllerClass)) {
+if (class_exists($controllerClass)) {
     /** @var \app\controllers\ProductController $controller */
     $controller = new $controllerClass(new \app\services\renderers\TemplateRenderer());
     $controller->run($action);
