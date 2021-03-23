@@ -1,20 +1,26 @@
 <?php
 
-
 namespace app\services\renderers;
 
 
+use app\base\Application;
 use app\interfaces\RendererInterface;
 
 class TemplateRenderer implements RendererInterface
 {
-    public function render(string $templateName, array $params = []): string
+    protected $viewsDir;
+
+    public function __construct(string $viewsDir)
     {
-        //extract(prepareViewParams());
-        extract($params);
-        ob_start();
-        include VIEWS_DIR . $templateName . ".php";
-        return ob_get_clean();
+        $this->viewsDir = $viewsDir;
     }
 
+
+    public function render(string $templateName, array $params = []): string
+    {
+        extract($params);
+        ob_start();
+        include  $this->viewsDir . $templateName . ".php";
+        return ob_get_clean();
+    }
 }

@@ -1,11 +1,13 @@
 <?php
 
-
 namespace app\controllers;
 
+use app\base\Application;
+use app\exceptions\ActionNotFoundException;
 use app\interfaces\RendererInterface;
-use app\services\renderers\TemplateRenderer;
-use app\services\renderers\TwigRenderer;
+use app\models\records\Menu;
+use app\models\Auth;
+use app\models\repositories\MenuRepository;
 
 abstract class Controller
 {
@@ -14,10 +16,17 @@ abstract class Controller
     protected $useLayout = true;
     protected $defaultLayout = 'main';
     protected $renderer = null;
+    protected $request = null;
 
-    public function __construct(RendererInterface $renderer)
+
+
+    protected $auth;
+
+    public function __construct()
     {
-        $this->renderer = $renderer;
+        $this->request = Application::getInstance()->request;
+        $this->renderer = Application::getInstance()->renderer;
+        $this->auth = Application::getInstance()->auth;
     }
 
     public function run($action = null)
@@ -27,18 +36,35 @@ abstract class Controller
         if (method_exists($this, $method)) {
             $this->$method();
         } else {
-            echo "404";
+            throw new ActionNotFoundException("Указанный action не найден!");
         }
     }
 
-    function render(string $template, array $params = [])
+
+    protected function getLayoutParams(): array
+    {
+        $menuAccessLevel = [0];
+        if ($user = $this->auth->getCurrentUser()) {
+            $menuAccessLevel[] = 2;
+        } else {
+            $menuAccessLevel[] = 1;
+        }
+        $menu = (new MenuRepository())->getOrderedList($menuAccessLevel);
+        return ['menu' => $menu];
+    }
+
+
+    public function render(string $template, array $params = [])
     {
         $content = $this->renderer->render($template, $params);
         if ($this->useLayout) {
-            return $this->renderer->render('layouts/' . $this->defaultLayout, ['content' => $content]);
+            $params = $this->getLayoutParams();
+            $params['content'] = $content;
+            return $this->renderer->render('layouts/' . $this->defaultLayout, $params);
         }
         return $content;
     }
+
 
     public function redirect(string $url)
     {
@@ -46,9 +72,9 @@ abstract class Controller
         exit();
     }
 
+
     public function redirectToReferer()
     {
         $this->redirect($_SERVER['HTTP_REFERER']);
     }
-
 }
