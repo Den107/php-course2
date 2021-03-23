@@ -3,22 +3,24 @@
 
 namespace app\controllers;
 
-//product/card
+use app\base\Application;
 use app\models\records\Product;
+use app\models\repositories\ProductRepository;
 
 class ProductController extends Controller
 {
-    public function actionIndex()
-    {
-            $products = Product::getAll();
-            echo $this->render('catalog', ['products' => $products]);
-    }
+        public function actionIndex()
+        {
+                $products = (new ProductRepository())->getAll();
+                echo $this->render('catalog', ['products' => $products]);
+        }
 
-    public function actionCard()
-    {
-            $id = $_GET['id'];
-            /** @var Product $product */
-            $product = Product::getById($id);
-            echo $this->render('card', ['product' =>$product]);
-    }
+        public function actionCard()
+        {
+                $id = $this->request->get('id');
+
+
+                $product = (new ProductRepository())->getById($id);
+                echo $this->render('card', ['product' => $product]);
+        }
 }

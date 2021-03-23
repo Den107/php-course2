@@ -1,31 +1,24 @@
 <?php
 
-namespace app\services;
 
-use app\traits\SingletonTrait;
+namespace app\services;
 
 class Db
 {
-    use SingletonTrait;
-
-    private $config = [
-        'driver' => 'mysql',
-        'host' => '127.0.0.1',
-        'login' => 'mysql',
-        'password' => 'mysql',
-        'dbName' => 'shop',
-        'charset' => 'utf8',
-    ];
+    private $config;
 
     protected $connection = null;
 
-
-    public function log()
+    public function __construct($driver, $host, $login, $password, $dbname, $charset = 'utf8')
     {
-    }
-
-    public function notify()
-    {
+        $this->config = [
+            'driver' => $driver,
+            'host' => $host,
+            'login' => $login,
+            'password' => $password,
+            'dbName' => $dbname,
+            'charset' => $charset,
+        ];
     }
 
     protected function getConnection()
@@ -46,7 +39,7 @@ class Db
         return $this->connection;
     }
 
-    //'mysql:dbname=testdb;host=127.0.0.1';
+
     protected function buildDsnString(): string
     {
         return sprintf(
@@ -58,10 +51,6 @@ class Db
         );
     }
 
-    /**
-     * @param string $sql SELECT * FROM products WHERE id = :id
-     * @param array $params [':id' => 2]
-     */
     private function query(string $sql, array $params = [])
     {
         $pdoStatement = $this->getConnection()->prepare($sql);
